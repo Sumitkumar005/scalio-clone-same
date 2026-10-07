@@ -10,9 +10,10 @@ pricing page before you rely on a number below.
 |---|---|---|---|
 | Web app | **Next.js 16 + TypeScript + Tailwind v4** (`/web`) | OSS | What most YC teams ship on; server + client in one repo |
 | Hosting | **Vercel Hobby** | Free, non-commercial | Zero-config Next.js. Move to Pro ($20/mo) once you charge money, or to **Cloudflare Workers** (OpenNext) which allows commercial use on free |
-| DB + Auth + Storage | **Supabase** | 2 projects, 500 MB Postgres, 1 GB storage, 50k MAU | Google / magic link / phone OTP built in, row-level security, pgvector for RAG |
+| Database | **MongoDB Atlas** (M0) | 512 MB, shared cluster | Flexible documents suit AI outputs, Atlas Vector Search for RAG. Local dev runs a single-node replica set |
+| Auth | **Better Auth** (open source, stores users in our MongoDB) | Free | Google, email magic link, phone OTP; no per-user fees, no vendor lock-in |
+| File storage | **Cloudflare R2** | 10 GB | Uploads and generated media |
 | Background jobs | **Inngest** or **Trigger.dev** | Free monthly runs | Image/video generation takes 10s to minutes; never run it inside a request |
-| Media CDN | **Cloudflare R2** | 10 GB, zero egress fees | Generated videos get heavy; R2 has no bandwidth bill |
 | Email | **Resend** | 3k emails/mo | Magic links, receipts |
 | Analytics | **PostHog** | 1M events/mo | Product analytics + session replay + feature flags in one |
 | Errors | **Sentry** | 5k errors/mo | |
@@ -33,7 +34,7 @@ task, not vendor.
 | Fast/cheap (captions, hashtags, classification) | **Gemini Flash-Lite**, or **Groq** Llama 3.x (free tier, very fast) | Claude Haiku 4.5 |
 | Indian languages | Gemini handles Hindi/Tamil/etc well; **Sarvam AI** for Indic-first models and TTS | |
 | Agent with tools (copilot that creates posts) | Gemini Flash with tool calling | **Claude** (best tool use reliability) |
-| Embeddings (knowledge base) | Gemini embeddings (free tier) into Supabase pgvector | |
+| Embeddings (knowledge base) | Gemini embeddings (free tier) into Atlas Vector Search | |
 
 ### Images (product shoots, posts, ad creatives)
 
@@ -64,11 +65,11 @@ One key, pay per call, you can switch model by changing a string.
 
 - TypeScript strict, ESLint, CI on every PR (`.github/workflows/ci.yml`: lint, typecheck, build).
 - Secrets only in env vars; `.env.example` lists every key, `.env*` is git-ignored.
-- Demo mode: app runs with zero keys so anyone can clone and click around.
+- Dev outbox: locally, magic links and OTPs land in MongoDB (`/api/dev/outbox`) so sign-in works without email or SMS providers.
 - Auth gate in `src/proxy.ts` (Next 16 renamed middleware to proxy).
 - Vendor adapters in `src/lib/*` so features never import a vendor SDK directly.
-- Long AI jobs: request creates a job row, worker processes it, UI polls or subscribes (Supabase Realtime). Never block an HTTP request on video generation.
-- Credits ledger table: every generation debits credits in the same transaction that creates the job.
+- Long AI jobs: request creates a job document, worker processes it, UI polls (or MongoDB change streams). Never block an HTTP request on video generation.
+- Credits ledger collection: every generation debits credits in the same MongoDB transaction that creates the job.
 - Next to add: Playwright smoke tests, Sentry, PostHog, preview deploys per PR.
 
 ## Legal guardrails

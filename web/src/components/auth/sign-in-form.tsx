@@ -3,12 +3,11 @@
 import { ArrowLeft, Loader2, Mail, Phone } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { isSupabaseConfigured } from "@/lib/env";
+import { authClient } from "@/lib/auth-client";
 import { t, type LangCode } from "@/lib/i18n";
-import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
-type Step = "choose" | "email" | "phone" | "sent";
+type Step = "choose" | "email" | "phone" | "code" | "sent";
 
 export function SignInForm({ lang, compact }: { lang: LangCode; compact?: boolean }) {
   const d = t(lang);
@@ -18,33 +17,66 @@ export function SignInForm({ lang, compact }: { lang: LangCode; compact?: boolea
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const redirectTo = () => `${window.location.origin}/auth/callback`;
+  const [code, setCode] = useState("");
 
   async function withGoogle() {
-    if (!isSupabaseConfigured) return router.push("/home");
     setBusy(true);
-    const { error } = await createClient().auth.signInWithOAuth({ provider: "google", options: { redirectTo: redirectTo() } });
-    if (error) setError(error.message);
+    const { error } = await authClient.signIn.social({ provider: "google", callbackURL: "/home" });
+    if (error) setError(error.message ?? "Google sign-in is not configured yet");
     setBusy(false);
   }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    if (!isSupabaseConfigured) return router.push("/home");
     setBusy(true);
-    const supabase = createClient();
-    const { error } =
-      step === "email"
-        ? await supabase.auth.signInWithOtp({ email: value, options: { emailRedirectTo: redirectTo() } })
-        : await supabase.auth.signInWithOtp({ phone: value });
+    if (step === "email") {
+      const { error } = await authClient.signIn.magicLink({ email: value, callbackURL: "/home" });
+      if (error) setError(error.message ?? "Could not send link");
+      else setStep("sent");
+    } else if (step === "phone") {
+      const { error } = await authClient.phoneNumber.sendOtp({ phoneNumber: value });
+      if (error) setError(error.message ?? "Could not send code");
+      else setStep("code");
+    } else if (step === "code") {
+      const { error } = await authClient.phoneNumber.verify({ phoneNumber: value, code });
+      if (error) setError(error.message ?? "Wrong code");
+      else router.push("/home");
+    }
     setBusy(false);
-    if (error) setError(error.message);
-    else setStep("sent");
   }
 
   if (step === "sent") {
-    return <p className="rounded-2xl bg-mint p-4 text-center text-sm font-medium text-brand">{d.linkSent}</p>;
+    return (
+      <div className="flex flex-col items-center gap-2">
+        <p className="rounded-2xl bg-mint p-4 text-center text-sm font-medium text-brand">{d.linkSent}</p>
+        {process.env.NEXT_PUBLIC_DEV_OUTBOX === "1" && <DevOutboxLink />}
+      </div>
+    );
+  }
+
+  if (step === "code") {
+    return (
+      <form onSubmit={submit} className="flex w-full flex-col gap-3">
+        <p className="text-center text-xs font-semibold uppercase tracking-wider text-muted">Enter the 6-digit code sent to {value}</p>
+        <input
+          autoFocus
+          required
+          inputMode="numeric"
+          autoComplete="one-time-code"
+          maxLength={6}
+          value={code}
+          onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+          className="h-13 rounded-xl border border-line bg-white px-4 text-center text-xl tracking-[0.5em] outline-none ring-brand/30 focus:ring-4"
+        />
+        <button disabled={busy} className="flex h-13 items-center justify-center gap-2 rounded-xl bg-brand font-semibold text-white disabled:opacity-60">
+          {busy && <Loader2 className="size-4 animate-spin" />}
+          Verify
+        </button>
+        {error && <p className="text-center text-sm text-red-600">{error}</p>}
+        {process.env.NEXT_PUBLIC_DEV_OUTBOX === "1" && <DevOutboxLink />}
+      </form>
+    );
   }
 
   if (step === "email" || step === "phone") {
@@ -95,6 +127,14 @@ export function SignInForm({ lang, compact }: { lang: LangCode; compact?: boolea
       </div>
       {error && <p className="mt-3 text-center text-sm text-red-600">{error}</p>}
     </div>
+  );
+}
+
+function DevOutboxLink() {
+  return (
+    <a href="/api/dev/outbox" target="_blank" className="text-center text-xs text-muted underline">
+      Dev: open outbox to see the link / code
+    </a>
   );
 }
 

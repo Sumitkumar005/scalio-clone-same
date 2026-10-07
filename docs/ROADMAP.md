@@ -4,10 +4,10 @@ Send screenshots of each logged-in screen; we build in this order.
 
 | # | Module | Status | Depends on |
 |---|---|---|---|
-| 0 | Login (desktop + mobile, 8 languages, Google / email / phone) | ✅ built | Supabase keys to go live |
+| 0 | Login (desktop + mobile, 8 languages, Google / email / phone) | ✅ built, MongoDB + Better Auth | Resend + SMS provider to go live |
 | 1 | App shell + home | ✅ built | |
 | 2 | Copilot chat (streaming, Gemini/Groq) | ✅ built | LLM key |
-| 3 | Onboarding (business profile) | ⏳ needs screenshots | DB schema |
+| 3 | Onboarding (business profile) | ⏳ needs screenshots | MongoDB collections |
 | 4 | Photo Studio | ⏳ | job queue, image model, storage |
 | 5 | Calendar AI | ⏳ | onboarding data |
 | 6 | Reels: template gallery + Remotion render | ⏳ | worker |

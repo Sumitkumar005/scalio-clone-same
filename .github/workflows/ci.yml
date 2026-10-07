@@ -9,6 +9,9 @@ jobs:
     defaults:
       run:
         working-directory: web
+    env:
+      # Build-time placeholder only; real secret lives in the deploy environment.
+      BETTER_AUTH_SECRET: ci-build-placeholder-not-a-real-secret-0000
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
