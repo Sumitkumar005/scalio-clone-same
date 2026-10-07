@@ -37,6 +37,9 @@ profile, then you land on Home with ideas made for your business.
 |---|---|
 | `GET /api/me` | User, business profile, credit balance, AI status |
 | `PATCH /api/business` | Update business profile / onboarding step (zod-validated) |
+| `POST /api/business/refresh` | Re-read the website. Fills empty fields; `overwrite` replaces only description, tagline, logo |
+| `POST /api/business/media` · `PATCH/DELETE /api/business/media/:fileId` | Business photos (tagged) and video outros |
+| `GET /api/billing` · `POST /api/billing` (dev) | Balance, plans, credit history; test top-up when `NEXT_PUBLIC_DEV_OUTBOX=1` |
 | `POST /api/onboarding/website` | Fetch site (SSRF-guarded), extract profile with AI or rules |
 | `POST /api/onboarding/complete` | Finish setup, grant 30 welcome credits once, generate first ideas |
 | `GET /api/ideas` · `POST /api/ideas/generate` · `PATCH/DELETE /api/ideas/:id` | Personalised content ideas |

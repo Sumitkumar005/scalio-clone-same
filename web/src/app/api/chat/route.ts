@@ -2,6 +2,7 @@ import { convertToModelMessages, streamText, type UIMessage } from "ai";
 import { getModel, SYSTEM_PROMPTS } from "@/lib/ai/models";
 import { getBusiness } from "@/lib/server/business";
 import { handler, requireUser } from "@/lib/server/session";
+import { promptProfile } from "@/lib/server/business";
 
 export const maxDuration = 30;
 
@@ -14,7 +15,7 @@ export const POST = handler(async (req: Request) => {
   }
   const b = await getBusiness(user.id);
   const context = b?.name
-    ? `\n\nThe user's business:\n${JSON.stringify({ name: b.name, category: b.category, description: b.description, offerings: b.offerings, audience: b.audience, city: b.city, tone: b.tone, instagram: b.instagram })}`
+    ? `\n\nThe user's business:\n${JSON.stringify(promptProfile(b))}`
     : "";
   const result = streamText({ model, system: SYSTEM_PROMPTS.chat + context, messages: await convertToModelMessages(messages) });
   return result.toUIMessageStreamResponse();

@@ -5,6 +5,7 @@ import { posts } from "@/lib/db/models";
 import { DEFAULT_CALENDAR_PREFS, type Business, type CalendarPost, type PostFormat } from "@/lib/domain";
 import { daysInMonth, festivalsFor } from "@/lib/festivals";
 import { recordUsage } from "./usage";
+import { promptProfile } from "./business";
 
 type Slot = { date: string; theme: string; format: PostFormat; festival?: string };
 type Copy = { title: string; subtitle: string; caption: string; hashtags: string[] };
@@ -55,7 +56,7 @@ export async function writeCopy(userId: string, b: Business, slots: Slot[]): Pro
         system:
           "You write a month of social media posts for a small Indian business. Each post must be specific to the business, useful to its customers, and never invent prices or discounts. Festival posts greet warmly and link back to the business.",
         prompt: JSON.stringify({
-          business: { name: b.name, category: b.category, description: b.description, offerings: b.offerings, audience: b.audience, city: b.city, tone: b.tone, language: b.language },
+          business: promptProfile(b),
           slots,
         }),
       });

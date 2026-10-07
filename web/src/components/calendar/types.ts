@@ -22,7 +22,7 @@ export type CalendarResponse = {
   festivals: { date: string; name: string }[];
   counts: { all: number; ready: number; draft: number; needs_attention: number; published: number };
   prefs: CalendarPrefs;
-  business: { name: string; logoUrl?: string } | null;
+  business: { name: string; logoUrl?: string; brandColor?: string } | null;
 };
 
 export const STATUS_META: Record<PostStatus, { label: string; dot: string; ring?: string }> = {

@@ -51,7 +51,7 @@ function CreditsPill({ credits }: { credits?: number }) {
   const empty = credits <= 0;
   return (
     <Link
-      href="/billing"
+      href="/settings/billing"
       className={cn(
         "flex h-10 items-center gap-1.5 rounded-2xl border px-3 text-sm font-semibold md:h-12 md:px-4",
         empty ? "border-red-200 bg-red-50 text-red-600" : "border-line bg-mint text-brand",

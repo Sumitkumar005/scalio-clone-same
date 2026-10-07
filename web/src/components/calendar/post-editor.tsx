@@ -9,7 +9,7 @@ import { imageUrl, STATUS_META, type PostDTO } from "./types";
 
 const input = "w-full rounded-xl border border-line bg-white px-3 py-2.5 outline-none focus:ring-4 focus:ring-brand/20";
 
-export function PostEditor({ post, onClose, onChanged }: { post: PostDTO; onClose: () => void; onChanged: (p: PostDTO | null) => void }) {
+export function PostEditor({ post, brandColor, onClose, onChanged }: { post: PostDTO; brandColor?: string; onClose: () => void; onChanged: (p: PostDTO | null) => void }) {
   const [f, setF] = useState({
     title: post.title,
     subtitle: post.subtitle ?? "",
@@ -61,10 +61,17 @@ export function PostEditor({ post, onClose, onChanged }: { post: PostDTO; onClos
             <img src={imageUrl(post)} alt={post.title} className="w-full rounded-2xl border border-line" />
             <div className="flex gap-2">
               {Array.from({ length: 6 }, (_, i) => (
-                <button key={i} aria-label={`Style ${i + 1}`} onClick={() => setF({ ...f, palette: i })} className={cn("size-8 rounded-full border-2", f.palette === i ? "border-ink" : "border-transparent", ["bg-[#0b5ed7]", "bg-[#1d7539]", "bg-[#ff6525]", "bg-[#6d28d9]", "bg-[#fcd34d]", "bg-[#7dd3fc]"][i])} />
+                <button
+                  key={i}
+                  aria-label={i === 0 && brandColor ? "Brand style" : `Style ${i + 1}`}
+                  title={i === 0 && brandColor ? "Your brand colour" : undefined}
+                  onClick={() => setF({ ...f, palette: i })}
+                  style={i === 0 && brandColor ? { background: brandColor } : undefined}
+                  className={cn("size-8 rounded-full border-2", f.palette === i ? "border-ink" : "border-transparent", ["bg-[#0b5ed7]", "bg-[#1d7539]", "bg-[#ff6525]", "bg-[#6d28d9]", "bg-[#fcd34d]", "bg-[#7dd3fc]"][i])}
+                />
               ))}
             </div>
-            <p className="text-xs text-muted">Pick a style, then Save to update the image.</p>
+            <p className="text-xs text-muted">Pick a style, then Save to update the image.{brandColor ? " The first one is your brand colour." : " Add a brand colour in Settings to get a Brand style."}</p>
             <a href={imageUrl(post)} download={`${post.date}-${post.title}.svg`} className="flex items-center justify-center gap-2 rounded-xl border border-line py-2 text-sm font-semibold hover:bg-mint">
               <Download className="size-4" /> Download image
             </a>

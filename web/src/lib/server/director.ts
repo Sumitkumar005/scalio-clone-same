@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { Business, ReelPlan } from "@/lib/domain";
+import { promptProfile } from "./business";
 
 export const ReelPlanSchema = z.object({
   title: z.string().describe("Short name for this reel, max 6 words"),
@@ -33,7 +34,7 @@ How to work:
 - As soon as you know enough, call the finalize_reel_plan tool with the full plan. Then reply in 1-2 lines saying it's ready and offering one tweak.
 - Plans must be phone-shootable, 15-30 seconds, with a strong hook. Use Hinglish when it fits the audience.
 - Never invent prices, discounts or claims the owner didn't give you. Leave a clear placeholder like [price] instead.
-${b?.name ? `\nBusiness: ${JSON.stringify({ name: b.name, category: b.category, description: b.description, offerings: b.offerings, audience: b.audience, city: b.city, tone: b.tone, language: b.language })}` : ""}`;
+${b?.name ? `\nBusiness: ${JSON.stringify(promptProfile(b))}` : ""}`;
 }
 
 /* ---------- Rule-based director (no AI key) ---------- */

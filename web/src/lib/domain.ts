@@ -26,6 +26,30 @@ export const CATEGORIES = [
   "Other",
 ] as const;
 
+export const BUSINESS_TYPES = ["Physical store", "Service", "Online store", "Home business", "Brand / manufacturer"] as const;
+export type BusinessType = (typeof BUSINESS_TYPES)[number];
+export const TONE_TAGS = ["Professional", "Friendly", "Modern", "Premium", "Youthful", "Minimal", "Elegant", "Bold", "Playful", "Trustworthy"] as const;
+export const PHOTO_TAGS = ["Social", "Video", "Product", "Team", "Store"] as const;
+export const CONTENT_LANGUAGES = [
+  { code: "en", label: "English" },
+  { code: "hinglish", label: "Hinglish" },
+  { code: "hi", label: "Hindi" },
+  { code: "ta", label: "Tamil" },
+  { code: "te", label: "Telugu" },
+  { code: "gu", label: "Gujarati" },
+  { code: "ml", label: "Malayalam" },
+  { code: "id", label: "Indonesian" },
+  { code: "tr", label: "Turkish" },
+] as const;
+
+export interface MediaItem {
+  fileId: string;
+  contentType: string;
+  name: string;
+  tags: string[];
+  createdAt: Date;
+}
+
 export type OnboardingStep = "welcome" | "goals" | "website" | "business" | "instagram" | "done";
 
 export interface Business {
@@ -43,6 +67,16 @@ export interface Business {
   tone?: string;
   brandColors: string[];
   logoUrl?: string;
+  /* Settings → My Business */
+  phone?: string;
+  tagline?: string;
+  subCategory?: string;
+  businessTypes?: BusinessType[];
+  toneTags?: string[];
+  usps?: string[];
+  photos?: MediaItem[];
+  outros?: MediaItem[];
+  instagramConnectedAt?: Date;
   goals: GoalId[];
   calendarPrefs?: CalendarPrefs;
   siteSnapshot?: { title?: string; description?: string; headings: string[]; fetchedAt: Date; source: "ai" | "rules" };

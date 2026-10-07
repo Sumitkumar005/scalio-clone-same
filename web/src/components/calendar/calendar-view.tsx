@@ -178,7 +178,7 @@ export function CalendarView() {
         <p className="flex items-center gap-2 text-sm text-brand"><Sparkles className="size-4" /> Writing posts around your business and this month&apos;s festivals…</p>
       )}
 
-      {open && <PostEditor key={open._id} post={open} onClose={() => onChanged(open)} onChanged={onChanged} />}
+      {open && <PostEditor key={open._id} post={open} brandColor={data?.business?.brandColor} onClose={() => onChanged(open)} onChanged={onChanged} />}
       {creating && <NewPostDialog date={creating} onClose={() => setCreating(null)} onCreated={(p) => { setCreating(null); mutate(); setEditing(p); }} />}
       {customizing && data && <CustomizeDialog prefs={data.prefs} onClose={() => setCustomizing(false)} onSaved={() => { setCustomizing(false); mutate(); }} />}
     </div>

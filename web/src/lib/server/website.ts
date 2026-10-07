@@ -17,6 +17,7 @@ export type SiteFacts = {
   instagram?: string;
   themeColor?: string;
   logoUrl?: string;
+  phone?: string;
 };
 
 export type ExtractedProfile = {
@@ -30,6 +31,10 @@ export type ExtractedProfile = {
   instagram?: string;
   brandColors: string[];
   logoUrl?: string;
+  phone?: string;
+  tagline: string;
+  subCategory: string;
+  usps: string[];
   source: "ai" | "rules";
 };
 
@@ -106,6 +111,9 @@ export async function fetchSite(input: string): Promise<SiteFacts> {
     .find((h) => /instagram\.com\/[A-Za-z0-9_.]+/.test(h));
   const instagram = igHref?.match(/instagram\.com\/([A-Za-z0-9_.]+)/)?.[1];
 
+  const telHref = $('a[href^="tel:"]').first().attr("href")?.replace(/^tel:/, "").trim();
+  const phone = telHref && /[\d+][\d\s-]{7,}/.test(telHref) ? telHref.replace(/[^\d+]/g, "") : undefined;
+
   $("script,style,noscript,svg,iframe").remove();
   const headings = $("h1,h2,h3")
     .map((_, el) => $(el).text().replace(/\s+/g, " ").trim())
@@ -122,6 +130,7 @@ export async function fetchSite(input: string): Promise<SiteFacts> {
     text: $("body").text().replace(/\s+/g, " ").trim().slice(0, 6000),
     instagram: instagram && !["p", "reel", "explore"].includes(instagram) ? instagram : undefined,
     themeColor: meta('meta[name="theme-color"]'),
+    phone,
     logoUrl: abs($('link[rel~="icon"]').attr("href")) ?? abs(meta('meta[property="og:image"]')),
   };
 }
@@ -130,7 +139,10 @@ const ProfileSchema = z.object({
   name: z.string().describe("Business or brand name"),
   category: z.enum(CATEGORIES),
   description: z.string().describe("One sentence, plain words, what the business does"),
-  offerings: z.array(z.string()).max(6).describe("Main products or services, 2-4 words each"),
+  offerings: z.array(z.string()).max(10).describe("Products or services they sell, 2-5 words each"),
+  tagline: z.string().describe("Short brand tagline from the site, max 10 words, or empty"),
+  subCategory: z.string().describe("Narrower niche, e.g. 'Study abroad platform', 'Bridal boutique'"),
+  usps: z.array(z.string()).max(6).describe("Concrete selling points stated on the site, one line each. No invented numbers."),
   audience: z.string().describe("Who buys, e.g. 'Indian students planning a master's abroad'"),
   city: z.string().describe("City or region if stated, else empty string"),
   tone: z.string().describe("Brand voice in 2-4 words"),
@@ -138,6 +150,7 @@ const ProfileSchema = z.object({
 
 export async function extractProfile(site: SiteFacts): Promise<ExtractedProfile> {
   const base = {
+    phone: site.phone,
     instagram: site.instagram,
     brandColors: site.themeColor ? [site.themeColor] : [],
     logoUrl: site.logoUrl,
@@ -185,5 +198,8 @@ function rulesProfile(site: SiteFacts) {
     audience: "",
     city: "",
     tone: "Friendly and clear",
+    tagline: site.description && site.description.length <= 80 ? site.description : "",
+    subCategory: "",
+    usps: site.headings.filter((h) => h.split(" ").length >= 4 && h.split(" ").length <= 14).slice(0, 4),
   };
 }

@@ -1,13 +1,5 @@
-import { PageHeader } from "@/components/app/page-header";
-import { SettingsForm } from "./settings-form";
+import { redirect } from "next/navigation";
 
-export const metadata = { title: "Settings" };
-
-export default function SettingsPage() {
-  return (
-    <>
-      <PageHeader title="Settings" subtitle="Your business profile powers every idea, post and video." />
-      <SettingsForm />
-    </>
-  );
+export default function SettingsIndex() {
+  redirect("/settings/business");
 }

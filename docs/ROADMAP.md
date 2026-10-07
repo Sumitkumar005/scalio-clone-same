@@ -14,6 +14,7 @@ Send screenshots of each logged-in screen; we build in this order.
 | 5 | Calendar: month/week/list, festivals, statuses, editor, branded creatives, customize | ✅ built | yearly festival date check |
 | 5b | Director: reel chats, search, plan card, usage meter, idea → video | ✅ built | DeepSeek key for open-ended chat |
 | 5c | Library: one feed across studios, filters, outputs, report, delete | ✅ built | |
+| 5d | Settings: My Business (website, identity, category, brand voice, social, photos, colours, outros, language), Billing, Posts Planner, Support | ✅ built | Razorpay for real upgrades |
 | 6 | Render reels to MP4 (Remotion) from director plans | ⏳ | worker |
 | 7 | Publish to Instagram | ⏳ | Meta app review |
 | 8 | Growth: Google Business Profile + reviews | ⏳ | Google API access approval |

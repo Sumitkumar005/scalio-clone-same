@@ -14,7 +14,7 @@ export function SubmitBar({ cost, disabled, busy, error, onSubmit, label }: { co
           <Coins className="size-4 text-brand" /> Costs <b>{cost} credit{cost > 1 ? "s" : ""}</b>
           {me && <span className="text-muted">· you have {me.credits}</span>}
         </span>
-        {short && <Link href="/billing" className="text-sm font-semibold text-brand underline">Get more credits</Link>}
+        {short && <Link href="/settings/billing" className="text-sm font-semibold text-brand underline">Get more credits</Link>}
         <button onClick={onSubmit} disabled={disabled || busy || !!short} className="ml-auto flex h-12 items-center gap-2 rounded-2xl bg-brand-bright px-6 font-semibold text-white shadow-lg shadow-brand/20 hover:bg-brand disabled:bg-line disabled:text-muted disabled:shadow-none">
           {busy && <Loader2 className="size-4 animate-spin" />} {label}
         </button>

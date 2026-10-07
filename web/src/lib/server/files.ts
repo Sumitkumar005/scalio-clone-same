@@ -4,12 +4,20 @@ import { files } from "@/lib/db/models";
 import { HttpError } from "./session";
 
 export const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
+export const MAX_VIDEO_BYTES = 30 * 1024 * 1024;
 
 /** Trust file bytes, not the browser's content-type. */
 export function sniffImageType(buf: Uint8Array): "image/jpeg" | "image/png" | "image/webp" | null {
   if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return "image/jpeg";
   if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) return "image/png";
   if (buf[0] === 0x52 && buf[1] === 0x49 && buf[2] === 0x46 && buf[3] === 0x46 && buf[8] === 0x57 && buf[9] === 0x45) return "image/webp";
+  return null;
+}
+
+/** MP4 / MOV (ISO base media: 'ftyp' at byte 4) and WebM. Used for outros. */
+export function sniffVideoType(buf: Uint8Array): "video/mp4" | "video/webm" | null {
+  if (buf[4] === 0x66 && buf[5] === 0x74 && buf[6] === 0x79 && buf[7] === 0x70) return "video/mp4";
+  if (buf[0] === 0x1a && buf[1] === 0x45 && buf[2] === 0xdf && buf[3] === 0xa3) return "video/webm";
   return null;
 }
 

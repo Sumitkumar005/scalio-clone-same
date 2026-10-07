@@ -1,12 +1,5 @@
-import { ComingSoon, PageHeader } from "@/components/app/page-header";
+import { redirect } from "next/navigation";
 
-export const metadata = { title: "Plan" };
-
-export default function Page() {
-  return (
-    <>
-      <PageHeader title="Plan" subtitle="Your plan, credits and invoices." />
-      <ComingSoon items={["Plan cards and trial", "Checkout (Razorpay / Stripe)", "Credit balance and usage", "Manage subscription"]} />
-    </>
-  );
+export default function BillingRedirect() {
+  redirect("/settings/billing");
 }

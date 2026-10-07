@@ -2,6 +2,7 @@ import { generateText, Output } from "ai";
 import { z } from "zod";
 import { getModel } from "@/lib/ai/models";
 import type { Business, Idea, Scene } from "@/lib/db/models";
+import { promptProfile } from "./business";
 
 type Draft = Omit<Idea, "_id" | "userId" | "businessId" | "status" | "createdAt" | "source">;
 
@@ -34,17 +35,8 @@ export async function generateIdeas(b: Business, count = 6): Promise<{ ideas: Dr
         output: Output.object({ schema: IdeasSchema }),
         system:
           "You are a short-form video and social media strategist for small businesses. Ideas must be specific to the business, practical to shoot on a phone, and built to get enquiries. Mix presenter-led and no-presenter formats.",
-        prompt: `Business profile:\n${JSON.stringify({
-          name: b.name,
-          category: b.category,
-          description: b.description,
-          offerings: b.offerings,
-          audience: b.audience,
-          city: b.city,
-          language: b.language,
-          tone: b.tone,
-          goals: b.goals,
-        })}\n\nWrite ${count} content ideas.`,
+        prompt: `Business profile:
+${JSON.stringify(promptProfile(b))}\n\nWrite ${count} content ideas.`,
       });
       return { ideas: output.ideas.slice(0, count), source: "ai" };
     } catch (e) {

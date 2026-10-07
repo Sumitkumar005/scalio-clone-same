@@ -35,6 +35,6 @@ export const GET = handler(async (req: Request) => {
     festivals: festivalsFor(m.year, m.month),
     counts,
     prefs: { ...DEFAULT_CALENDAR_PREFS, ...business?.calendarPrefs },
-    business: business ? { name: business.name, logoUrl: business.logoUrl } : null,
+    business: business ? { name: business.name, logoUrl: business.logoUrl, brandColor: business.brandColors?.[0] } : null,
   });
 });

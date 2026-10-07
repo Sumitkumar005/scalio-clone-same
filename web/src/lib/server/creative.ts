@@ -31,10 +31,26 @@ function wrap(text: string, maxChars: number, maxLines: number) {
   return lines;
 }
 
-export function renderPostSvg(p: { title: string; subtitle?: string; brand: string; badge?: string; palette: number; width?: number; height?: number }) {
+function shade(hex: string, amt: number) {
+  const n = parseInt(hex.slice(1), 16);
+  const ch = (v: number) => Math.max(0, Math.min(255, Math.round(v * (1 + amt))));
+  return `#${[ch(n >> 16), ch((n >> 8) & 255), ch(n & 255)].map((v) => v.toString(16).padStart(2, "0")).join("")}`;
+}
+
+/** Style 0 uses the business's own brand colour when one is set in Settings. */
+function paletteFor(index: number, brandColor?: string) {
+  if (index === 0 && brandColor && /^#[0-9a-f]{6}$/i.test(brandColor)) {
+    return { bg1: brandColor, bg2: shade(brandColor, -0.55), accent: "#ffffff", text: "#ffffff" };
+  }
+  return CREATIVE_PALETTES[index % CREATIVE_PALETTES.length];
+}
+
+export function renderPostSvg(p: { title: string; subtitle?: string; brand: string; badge?: string; palette: number; brandColor?: string; phone?: string; width?: number; height?: number }) {
   const W = p.width ?? 1080;
   const H = p.height ?? 1350;
-  const c = CREATIVE_PALETTES[p.palette % CREATIVE_PALETTES.length];
+  const c = paletteFor(p.palette, p.brandColor);
+  const cta = p.phone ? `Call ${p.phone}` : "Know more →";
+  const ctaW = Math.max(300, 60 + cta.length * 19);
   const titleLines = wrap(p.title, 16, 4);
   const subLines = wrap(p.subtitle ?? "", 34, 3);
   const titleSize = titleLines.length > 3 ? 92 : 112;
@@ -54,8 +70,8 @@ export function renderPostSvg(p: { title: string; subtitle?: string; brand: stri
     ${p.badge ? `<rect x="72" y="${titleY - titleSize - 70}" width="${40 + p.badge.length * 20}" height="58" rx="29" fill="${c.accent}"/><text x="92" y="${titleY - titleSize - 30}" font-size="30" font-weight="800" fill="${c.bg2}">${esc(p.badge)}</text>` : ""}
     ${titleLines.map((l, i) => `<text x="72" y="${titleY + i * (titleSize * 1.05)}" font-size="${titleSize}" font-weight="800" letter-spacing="-2">${esc(l)}</text>`).join("\n    ")}
     ${subLines.map((l, i) => `<text x="72" y="${titleY + titleLines.length * titleSize * 1.05 + 40 + i * 50}" font-size="40" font-weight="500" opacity="0.88">${esc(l)}</text>`).join("\n    ")}
-    <rect x="72" y="${H - 170}" width="300" height="88" rx="44" fill="${c.accent}"/>
-    <text x="222" y="${H - 113}" font-size="34" font-weight="800" fill="${c.bg2}" text-anchor="middle">Know more →</text>
+    <rect x="72" y="${H - 170}" width="${ctaW}" height="88" rx="44" fill="${c.accent}"/>
+    <text x="${72 + ctaW / 2}" y="${H - 113}" font-size="34" font-weight="800" fill="${c.bg2}" text-anchor="middle">${esc(cta)}</text>
   </g>
 </svg>`;
 }
