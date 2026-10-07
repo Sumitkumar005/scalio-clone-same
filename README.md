@@ -23,8 +23,28 @@ npm install
 npm run dev                  # http://localhost:3000
 ```
 
-Sign in with email or phone: the link / code shows up at
-http://localhost:3000/api/dev/outbox (dev only, `NEXT_PUBLIC_DEV_OUTBOX=1`).
+Open http://localhost:3000. No sign-up needed: you get a guest account and go
+straight into onboarding. Paste your website and it fills your business
+profile, then you land on Home with ideas made for your business.
+
+- Add `DEEPSEEK_API_KEY` to turn on AI (website reading, ideas, chat). Without it, ideas come from built-in templates.
+- Signing in (email or phone) keeps your guest data. Locally, the link / code shows up at
+  http://localhost:3000/api/dev/outbox (`NEXT_PUBLIC_DEV_OUTBOX=1`).
+
+## API (Next.js route handlers, MongoDB)
+
+| Route | What it does |
+|---|---|
+| `GET /api/me` | User, business profile, credit balance, AI status |
+| `PATCH /api/business` | Update business profile / onboarding step (zod-validated) |
+| `POST /api/onboarding/website` | Fetch site (SSRF-guarded), extract profile with AI or rules |
+| `POST /api/onboarding/complete` | Finish setup, grant 30 welcome credits once, generate first ideas |
+| `GET /api/ideas` · `POST /api/ideas/generate` · `PATCH/DELETE /api/ideas/:id` | Personalised content ideas |
+| `POST /api/chat` | Streaming chat with business context |
+| `/api/auth/*` | Better Auth: guest, Google, email magic link, phone OTP |
+
+MongoDB collections: `user`, `session`, `account`, `verification` (auth),
+`businesses`, `ideas`, `credit_ledger`.
 
 ## Deploy free
 

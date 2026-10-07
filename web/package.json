@@ -9,17 +9,20 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@ai-sdk/deepseek": "^3.0.61",
     "@ai-sdk/google": "^4.0.90",
     "@ai-sdk/groq": "^4.0.57",
     "@ai-sdk/react": "^4.0.133",
     "ai": "^7.0.130",
     "better-auth": "^1.7.7",
+    "cheerio": "^1.2.0",
     "clsx": "^2.1.1",
     "lucide-react": "^1.52.0",
     "mongodb": "^7.7.0",
     "next": "16.4.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "swr": "^2.5.1",
     "tailwind-merge": "^3.7.0",
     "zod": "^4.6.5"
   },

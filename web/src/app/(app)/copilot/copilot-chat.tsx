@@ -5,13 +5,13 @@ import { ArrowUp, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
-const STARTERS = [
-  "Write 3 Instagram captions for a Diwali sale at my saree shop",
-  "Script a 20-second reel for a new cafe menu item",
+const DEFAULT_STARTERS = [
+  "Write 3 Instagram captions for this week's offer",
+  "Script a 20-second reel about our bestseller",
   "Reply politely to a 2-star Google review about late delivery",
 ];
 
-export function CopilotChat() {
+export function CopilotChat({ starters = DEFAULT_STARTERS, placeholder = "Ask Copilot…" }: { starters?: string[]; placeholder?: string }) {
   const { messages, sendMessage, status, error } = useChat();
   const [input, setInput] = useState("");
   const busy = status === "submitted" || status === "streaming";
@@ -26,7 +26,7 @@ export function CopilotChat() {
     <div className="mx-auto flex max-w-3xl flex-col gap-4">
       {messages.length === 0 && (
         <div className="grid gap-3 sm:grid-cols-3">
-          {STARTERS.map((s) => (
+          {starters.map((s) => (
             <button key={s} onClick={() => send(s)} className="rounded-2xl border border-line bg-white p-4 text-left text-sm hover:bg-mint">
               {s}
             </button>
@@ -47,7 +47,7 @@ export function CopilotChat() {
         ))}
         {error && (
           <p className="rounded-xl bg-red-50 p-3 text-sm text-red-700">
-            Copilot is offline. Add GOOGLE_GENERATIVE_AI_API_KEY or GROQ_API_KEY to .env.local.
+            AI is not connected yet. Add DEEPSEEK_API_KEY (or a Gemini / Groq key) to .env.local and restart.
           </p>
         )}
       </div>
@@ -61,7 +61,7 @@ export function CopilotChat() {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask Copilot…"
+          placeholder={placeholder}
           className="flex-1 bg-transparent px-3 py-2 outline-none"
         />
         <button disabled={busy} aria-label="Send" className="grid size-10 place-items-center rounded-xl bg-brand text-white disabled:opacity-50">

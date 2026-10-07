@@ -1,7 +1,8 @@
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { nextCookies } from "better-auth/next-js";
-import { magicLink, phoneNumber } from "better-auth/plugins";
+import { anonymous, magicLink, phoneNumber } from "better-auth/plugins";
+import { businesses, credits, ideas } from "@/lib/db/models";
 import { db, devOutbox, mongoClient } from "@/lib/db/mongo";
 import { env } from "@/lib/env";
 
@@ -19,6 +20,18 @@ export const auth = betterAuth({
       ? { google: { clientId: env.googleClientId, clientSecret: env.googleClientSecret } }
       : undefined,
   plugins: [
+    // Guests get a real session instantly; signing in later keeps their data.
+    anonymous({
+      emailDomainName: "guest.local",
+      onLinkAccount: async ({ anonymousUser, newUser }) => {
+        const from = anonymousUser.user.id;
+        const to = newUser.user.id;
+        const hasOwn = await businesses().findOne({ userId: to });
+        if (!hasOwn) await businesses().updateOne({ userId: from }, { $set: { userId: to } });
+        await ideas().updateMany({ userId: from }, { $set: { userId: to } });
+        await credits().updateMany({ userId: from }, { $set: { userId: to } });
+      },
+    }),
     magicLink({
       sendMagicLink: ({ email, url }) => deliver("email", email, `Sign-in link: ${url}`, url),
     }),

@@ -82,6 +82,7 @@ export function LoginScreen() {
 function Footer() {
   return (
     <div className="mt-3 flex flex-col items-center gap-1 text-xs text-muted">
+      <Link href="/onboarding" className="mb-3 text-sm font-semibold text-brand hover:underline">Try it first, no sign-up →</Link>
       <div className="flex gap-3">
         <Link href="/legal/terms" className="hover:text-ink">Terms</Link>·
         <Link href="/legal/privacy" className="hover:text-ink">Privacy</Link>·
