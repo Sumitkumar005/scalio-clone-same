@@ -11,7 +11,8 @@ async function find(userId: string, id: string) {
 
 export const GET = handler(async (_req: Request, ctx: RouteContext<"/api/director/threads/[id]">) => {
   const user = await requireUser();
-  return Response.json({ thread: await find(user.id, (await ctx.params).id) });
+  const t = await find(user.id, (await ctx.params).id);
+  return Response.json({ thread: { ...t, messages: Array.isArray(t.messages) ? t.messages : [] } });
 });
 
 export const DELETE = handler(async (_req: Request, ctx: RouteContext<"/api/director/threads/[id]">) => {

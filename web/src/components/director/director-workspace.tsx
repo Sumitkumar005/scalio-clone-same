@@ -191,7 +191,7 @@ function Conversation({ thread, initialPrompt, onFinish }: { thread: ThreadFull;
   const [input, setInput] = useState("");
   const { messages, sendMessage, status, error } = useChat({
     id: thread._id,
-    messages: thread.messages,
+    messages: thread.messages ?? [],
     transport: new DefaultChatTransport({ api: "/api/director/chat", body: { threadId: thread._id } }),
     onFinish,
   });
@@ -200,11 +200,11 @@ function Conversation({ thread, initialPrompt, onFinish }: { thread: ThreadFull;
   const scroller = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (initialPrompt && !sent.current && thread.messages.length === 0) {
+    if (initialPrompt && !sent.current && !thread.messages?.length) {
       sent.current = true;
       sendMessage({ text: initialPrompt });
     }
-  }, [initialPrompt, thread.messages.length, sendMessage]);
+  }, [initialPrompt, thread.messages?.length, sendMessage]);
 
   // Scroll only the chat pane, never the page.
   useEffect(() => {
@@ -223,7 +223,7 @@ function Conversation({ thread, initialPrompt, onFinish }: { thread: ThreadFull;
       <div ref={scroller} className="flex-1 overflow-y-auto px-4 py-6">
         <div className="mx-auto flex max-w-3xl flex-col gap-4">
           {messages.map((m) => {
-            const text = m.parts.filter((p) => p.type === "text").map((p) => (p as { text: string }).text).join("");
+            const text = (m.parts ?? []).filter((p) => p.type === "text").map((p) => (p as { text: string }).text).join("");
             if (!text) return null;
             return (
               <div key={m.id} className={cn("flex gap-3", m.role === "user" && "justify-end")}>
