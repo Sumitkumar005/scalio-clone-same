@@ -41,10 +41,26 @@ profile, then you land on Home with ideas made for your business.
 | `POST /api/onboarding/complete` | Finish setup, grant 30 welcome credits once, generate first ideas |
 | `GET /api/ideas` · `POST /api/ideas/generate` · `PATCH/DELETE /api/ideas/:id` | Personalised content ideas |
 | `POST /api/chat` | Streaming chat with business context |
+| `GET/POST /api/director/threads` · `GET/DELETE /api/director/threads/:id` | Reel conversations, search, weekly AI usage |
+| `POST /api/director/chat` | Video director: asks what it needs, then saves a reel plan (AI tool call, or rule-based without a key) |
+| `GET /api/calendar?month=YYYY-MM` | Month of posts, festivals, status counts, plan settings |
+| `POST /api/calendar/generate` | Fill empty future days (never overwrites existing posts) |
+| `POST /api/calendar/posts` · `PATCH/DELETE /api/calendar/posts/:id` | Create, edit, mark ready / scheduled / published |
+| `GET /api/calendar/posts/:id/image` | On-brand post creative (SVG) |
+| `PUT /api/calendar/prefs` | Posts per week, formats, themes, posting time |
+| `POST /api/files` · `GET /api/files/:id` | Upload garment photos (type-sniffed, 8 MB max), stored in MongoDB GridFS |
+| `POST /api/studio/jobs` | Photoshoot or marketplace pack; credits charged in a transaction, refunded on failure |
+| `GET /api/creations` · `GET/PATCH/DELETE /api/creations/:id` | Library feed across studios, report a problem, delete |
 | `/api/auth/*` | Better Auth: guest, Google, email magic link, phone OTP |
 
 MongoDB collections: `user`, `session`, `account`, `verification` (auth),
-`businesses`, `ideas`, `credit_ledger`.
+`businesses`, `ideas`, `credit_ledger`, `reel_threads`, `ai_usage`,
+`calendar_posts`, `creations`, `files.*` (GridFS).
+
+Optional keys: `DEEPSEEK_API_KEY` (AI text), `FAL_KEY` (real model photos in
+Fashion Studio). Without them every screen still works: the director runs a
+guided 3-question flow, the calendar uses templates, and studio outputs are
+clearly marked previews.
 
 ## Deploy free
 

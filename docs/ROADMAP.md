@@ -10,9 +10,11 @@ Send screenshots of each logged-in screen; we build in this order.
 | 3 | Onboarding: welcome, goals, website reader, business review, Instagram handle | ✅ built | Meta app for real Instagram connect |
 | 3b | Home: hero, create cards, personalised idea storyboards; Ideas, Library (saved), Settings | ✅ built | |
 | 3c | Guest mode: no sign-up wall, guest data moves over on sign-in | ✅ built | |
-| 4 | Photo Studio | ⏳ | job queue, image model, storage |
-| 5 | Calendar AI | ⏳ | onboarding data |
-| 6 | Reels: template gallery + Remotion render | ⏳ | worker |
+| 4 | Fashion Studio: photoshoot (model, pose, scene, styling) + marketplace pack | ✅ built, preview renders until FAL_KEY | fal.ai key; move jobs to a queue at scale |
+| 5 | Calendar: month/week/list, festivals, statuses, editor, branded creatives, customize | ✅ built | yearly festival date check |
+| 5b | Director: reel chats, search, plan card, usage meter, idea → video | ✅ built | DeepSeek key for open-ended chat |
+| 5c | Library: one feed across studios, filters, outputs, report, delete | ✅ built | |
+| 6 | Render reels to MP4 (Remotion) from director plans | ⏳ | worker |
 | 7 | Publish to Instagram | ⏳ | Meta app review |
 | 8 | Growth: Google Business Profile + reviews | ⏳ | Google API access approval |
 | 9 | Inbox: WhatsApp AI receptionist | ⏳ | WhatsApp Business verification |

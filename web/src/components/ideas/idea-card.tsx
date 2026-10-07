@@ -1,6 +1,7 @@
 "use client";
 
-import { Bookmark, BookmarkCheck, Briefcase, Clapperboard, Laptop, Smartphone, User, UserX } from "lucide-react";
+import { Bookmark, BookmarkCheck, Briefcase, Clapperboard, Laptop, Smartphone, User, UserX, Wand2 } from "lucide-react";
+import Link from "next/link";
 import type { IdeaDTO } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
@@ -63,6 +64,9 @@ export function IdeaCard({ idea, onToggleSave }: { idea: IdeaDTO; onToggleSave?:
           {idea.durationSec}s <span>·</span>
           {idea.presenter ? <User className="size-3.5" /> : <UserX className="size-3.5" />}
           {idea.presenter ? "Presenter" : "No presenter"}
+          <Link href={`/director?idea=${idea._id}`} className="ml-auto flex items-center gap-1 rounded-full bg-mint px-2.5 py-1 font-semibold text-brand opacity-0 transition group-hover:opacity-100 focus:opacity-100">
+            <Wand2 className="size-3.5" /> Make video
+          </Link>
         </p>
       </div>
     </article>
